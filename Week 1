@@ -1,0 +1,38 @@
+OSI MODEL -> adopted by iso as internation standard in 1984. shows how computers within a network communicate
+1) physical layer
+2) data link layer
+3) network layer
+4) transport layer
+5) session layer
+6) presentation layer
+7) application layer
+
+1) Physical layer -> conveys the bitstream, provides the harware means of sending and receiving data on a carrier including cables, cards
+Fast Ethernet, RS232, and ATM are protocols with physical layer components.
+
+2) Data link layer -> divided into 2 parts
+
+a) MAC layer -> controls how a computer on the network gains access to the data and permission to transmit it.
+b) LLC layer -> controls frame synchronization, flow control, and error checking.
+
+packages Bits of information into data frames to be sent to the physical layer.
+data frame is the protocol data unit, or PDU of the data link layer and represents a group of information
+
+3) Network layer -> manages the routing of the data. 
+manages the mapping between addresses, forwarding packets of data to and from IP addresses
+uses network layer protocols to create logical paths known as virtual circuits.
+
+4) Transport layer -> 
+transfer of data across network connetions, or hosts
+manages flow control. It sends data at a rate that matches the connection speed of the receiving device, also carries out error control
+
+5) Session Layer ->
+handles connections between different devices in the network.
+responsible for opening sessions, ensuring they remain open and functional while data is being transferred, and closing them when communication ends.
+
+6) Presentation layer->>
+handles “syntax processing” – in other words, it converts data from one format to another.
+
+7) Application layer-> 
+The application layer provides networking processes to the end-user
+sends data to, and receives data from, the presentation layer.
