@@ -36,3 +36,42 @@ handles “syntax processing” – in other words, it converts data from one fo
 7) Application layer-> 
 The application layer provides networking processes to the end-user
 sends data to, and receives data from, the presentation layer.
+
+
+x-------------------x----------------------------x---------------------x---------------------------x-------------------x----------------------------x
+
+TCP/IP -> created in the 1970s by the Defense Advance Research Project Agency (DARPA) 
+
+1) Network access -> physical layer, data link layer
+2) Internet layer
+3) Transport layer
+4) Appliation layer -> session, management, application
+
+TCP/IP model is used generally in the industry, as OSI model is for prescribing a more detailed way how the things work.
+
+x-------------------x----------------------------x---------------------x---------------------------x-------------------x----------------------------x
+
+TCP V/S UDP
+
+TCP -> transmission control protocol, onnection oriented, once a connection is established, data can be sent bidirectional.
+a) suited for applications that require high reliability, and transmission time is relatively less critical.
+b)  HTTP, HTTPs, FTP, SMTP, Telnet	
+c) TCP rearranges data packets in the order specified.
+d) slower than UDP.
+e) absolute guarantee that the data transferred remains intact and arrives in the same order in which it was sent.
+f) header size is 20 bytes
+
+
+UDP -> simpler, connectionless Internet protocol. Multiple messages are sent as packets in chunks
+a) suitable for applications that need fast, efficient transmission, such as games.
+b) DNS, DHCP, TFTP, SNMP, RIP, VOIP
+c) UDP has no inherent order as all packets are independent of each other.
+d) faster because error recovery is not attempted
+e) no guarantee that the messages or packets sent would reach at all
+f) Header size is 8 bytes
+
+
+
+
+
+
