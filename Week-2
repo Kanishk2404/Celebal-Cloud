@@ -1,0 +1,62 @@
+Configure IP Addresses and Unique Subnets for New Users
+
+Address, subnets, subnet mask.
+
+IP address -> An IP address is an address used in order to uniquely identify a device on an IP network. 
+made up of 32 bits.
+
+has 2 parts, network and host portion with the help of subnet mask. 
+broken into 4 octets of 8 bits each
+
+-> It has five classes - A , B , C, D , E. 
+A  -> 1.0.0.0 - 127.255.255.255 . 1 network portion , 3 host
+B -> 128.0.0.0 - 191.255.255.255  2 network portion, 2 host.
+C -> 192.0.0.0 - 233.255.255.255  3 network portion, 1 host
+D -> 224.0.0.0 - 239.255.255.255
+E -> 240.0.0.0 - 255.255.255.255  
+
+D and E are not used in daily life, they are used for r&d purpose.
+
+# Subnet Masks
+ Used to define which part of an IP address is the network and which is the host.
+
+Example:
+
+IP : 10.20.15.1
+
+Subnet Mask : 255.0.0.0
+
+Network Part : 10
+
+Host Part : 20.15.1
+
+# CIDR (Classless Inter-Domain Routing)
+ CIDR removes the class-based system.
+ Uses the format: IP/prefix (e.g., 192.168.1.0/24)
+ /24 means first 24 bits are the network portion
+
+Special Subnets
+/31 -> Used for point-to-point links (2 usable IPs, no broadcast)
+
+/32 -> Refers to a single host (commonly used for loopback or host-specific routes
+
+VLSM (Variable Length Subnet Mask)
+-> Lets you create subnets of different sizes within the same network
+-> Helps efficiently use IP addresses based on specific needs
+
+Practical Use Case
+-> Each router interface must get an IP from a unique subnet
+-> Avoid subnet overlap — always calculate and plan properly
+
+# isco Recommendation (RFC1918 Private IPs)
+If not using public internet, use private address ranges:
+
+Class A -> 10.0.0.0/8
+
+Class B -> 172.16.0.0/12
+
+Class C -> 192.168.0.0/16
+
+
+
+
