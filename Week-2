@@ -58,5 +58,109 @@ Class B -> 172.16.0.0/12
 Class C -> 192.168.0.0/16
 
 
+x-------------------------x-------------------x---------------------------------x------------x
+
+ARP and Its Variants
+
+# ARP (Address Resolution Protocol)
+
+- Resolves IP address to MAC address (Layer 3 -> Layer 2)
+- Used when sender knows IP but not MAC of the destination
+
+How it works:
+- Sender broadcasts ARP request for the target IP
+- All hosts receive it, only the target replies (unicast) with its MAC
+- Sender updates ARP cache and communicates directly via MAC
+
+
+
+# RARP (Reverse ARP)
+
+Opposite of ARP → Resolves MAC → IP
+-> Used by diskless devices to get an IP from a RARP server
+-> Broadcasts MAC and receives IP in reply
+
+ Deprecated. Replaced by BOOTP and DHCP.
+
+
+
+# InARP (Inverse ARP)
+
+Like RARP but used in ATM or Frame Relay networks
+-> Learns remote IP from known DLCI (Layer 2 address)
+-> Enabled by default in Frame Relay
+
+When device knows DLCI but not the IP.
+
+
+# Proxy ARP
+-> Used when two devices are in the same IP subnet but on different data link networks
+
+How it works:
+
+Router responds to ARP request on behalf of the destination
+
+Sends its own MAC pretending to be the actual host
+
+Sender thinks the destination is local and sends data to router
+
+Router forwards it to the actual destination
+
+Enabled by default.
+
+# Gratuitous ARP
+→ Sent by a device when it boots up
+→ Broadcasts its own IP/MAC mapping without being asked
+
+Why used:
+
+Detect IP conflicts
+
+Update ARP caches on the network
+
+Inform switches about MAC location
+
+ Gratuitous ARP Request: IP = source & destination
+ Gratuitous ARP Reply: Unsolicited ARP reply
+
+
+# ARP Spoofing / Poisoning
+→ Attacker sends fake ARP responses to associate their MAC with another IP (e.g. gateway)
+→ Victim unknowingly sends data to the attacker instead of the real target
+
+Allows attacker to:
+
+Intercept traffic (Man-in-the-Middle)
+
+Modify packets
+
+Launch DoS attacks
+
+Hijack sessions
+
+ ARP Spoofing is the base for many network attacks.
+
+
+----- x ----------------x ---------------------x ----------------x --------------x 
+
+While going through ARP and its extended family — RARP, InARP, Proxy ARP, and Gratuitous ARP — I dug a little deeper to understand how these actually behave 
+in real networks beyond just definitions. ARP itself is pretty straightforward: it's the protocol that helps map IP addresses to MAC addresses so machines on a 
+local network can communicate. What’s interesting is how ARP broadcasts a discovery message across the network, and only the device with the matching IP replies 
+with its MAC, which then gets cached. RARP flips this process; instead of finding a MAC from an IP, it helps a device find its own IP when it only knows its MAC —
+mostly useful in older setups or diskless systems. But RARP’s kind of obsolete now, replaced by more efficient protocols like BOOTP and DHCP.
+
+Then there’s InARP, which isn’t just a reverse ARP but is used specifically in networks like Frame Relay or ATM, where you know the Layer 2 address (like DLCI) but
+need to find the Layer 3 IP. It’s useful in dynamic mapping and auto-config scenarios. Proxy ARP is a clever trick — basically when two devices are in the same IP 
+network but different physical segments, a router in between can answer ARP requests on behalf of another device, pretending it's on the same link. It's enabled by
+default on many routers, helping devices talk like they’re neighbors even when they’re not. Gratuitous ARP, on the other hand, is just a device announcing itself 
+— kind of like saying “hey, I’m here” to the network. It sends a broadcast even though no one asked, mainly to update switch MAC tables or help DHCP servers know
+where to deliver IPs. It also helps detect IP conflicts or update mappings silently.
+
+And then there’s ARP spoofing — probably the most fun (and dangerous) part if you’re into red teaming. It’s when an attacker fakes ARP replies to associate their 
+MAC with someone else’s IP, often the default gateway. This lets them intercept traffic, mess with data, or even shut communication down. It’s a gateway to MITM, 
+DoS, and hijacking attacks. Understanding all of this really puts into perspective how critical these “simple” protocols are — and how easily they can be 
+manipulated if you’re not watching the wires.
+
+
 
 
