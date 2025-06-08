@@ -1,0 +1,29 @@
+1. Azure Global Infrastructure - defined boundaries of regions that comply with data residency, sovereignty, and compliance
+a) Each geography contains at least one Azure Region.
+b) Data does not leave the geography unless explicitly allowed.
+
+2. Azure Regions - set of datacenters deployed within a specific geographic location, connected by a low-latency network.
+scalability, redundancy, and availability.
+
+Region Name	Location
+East US	Virginia, USA
+Southeast Asia	Singapore
+Central India	Pune, India
+West Europe	Netherlands
+
+3. Availability Zones -  physically separate locations within an Azure Region
+Key Features -> At least three AZs per region, Protects against datacenter-level failures, high availability and fault tolerance, deployment of zone-redundant applications.
+
+4. Azure Data Centers - Data Center is a physical facility housing servers, networking equipment, and cooling systems that run Azure services.
+Key Insights - Connected via Microsoft’s fiber-optic network, uses custom-designed hardware and AI-powered cooling systems.
+
+Compliance & Security
+Meets ISO/IEC certifications, SOC, HIPAA, GDPR, and more.
+Includes biometric access, security personnel, and 24x7 monitoring.
+
+Component       	   Purpose	                               Example
+Azure Geography	  Data sovereignty, compliance	           India, US, EU
+Azure Region	  Regional deployment & services	           West US, Central India
+Availability   Zone	High availability and fault isolation	 Zone 1, Zone 2, Zone 3 in East US
+Data Center	  Physical infrastructure layer	Confidential   (e.g., Dublin DC)
+
