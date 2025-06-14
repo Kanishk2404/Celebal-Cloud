@@ -1,0 +1,201 @@
+Azure Virtual Network (VNet) - R&D Document
+
+Objective
+
+To delve into the fundamental components and features of Azure Virtual Network (VNet), learn about CIDR ranges, subnets, peering, routing, and integrate Azure services. Also, deploy a use case including VM deployment across subnets and VNet peering.
+
+1. Introduction to Azure Virtual Network
+
+A Virtual Network (VNet) is the basic building block of your own network within Azure. It allows Azure resources like Virtual Machines (VMs), databases, and services to communicate securely with one another, on-premises networks, and the internet.
+
+Key Features:
+
+Logical isolation
+
+Custom IP address ranges (CIDR)
+
+Subnet segmentation
+
+Secure inbound and outbound communication
+
+Integration with Azure services
+
+2. CIDR Ranges and Subnetting
+
+CIDR (Classless Inter-Domain Routing)
+
+CIDR notation specifies the extent of an address range. For instance:
+
+10.0.0.0/16: Supports 65,536 IP addresses
+
+10.0.1.0/24: Supports 256 IP addresses
+
+Subnetting
+
+Subnets assist in dividing a VNet into smaller, manageable segments.
+Example:
+
+VNet Address Space: 10.0.0.0/16
+
+Subnet-Windows: 10.0.1.0/24
+
+Subnet-Linux: 10.0.2.0/24
+
+3. VNet Peering
+
+VNet peering interconnects two VNets and allows traffic to pass privately between them.
+
+Types of Peering
+
+Type
+
+Description
+
+Intra-region
+
+Between VNets in the same Azure region
+
+Global Peering
+
+Between VNets in different Azure regions
+
+Advantages:
+
+Low latency, high-speed communication
+
+No public IPs are required
+
+Supports resource access and routing across VNets
+
+4. Network Routing in Azure
+
+Azure performs default system routing by itself. You may override it by using:
+
+Custom Route Tables
+
+Create custom routes to manage traffic flow
+
+Map them to particular subnets
+
+Border Gateway Protocol (BGP)
+
+Deployed in hybrid networks
+
+Emit on-premises routes into Azure
+
+5. Secure Network Traffic
+
+Network Security Groups (NSGs)
+
+Manage inbound and outbound traffic with rules
+
+Specify source/destination, protocol, port, and direction
+
+Network Virtual Appliances (NVAs)
+
+Custom VM-based appliances that perform as firewalls, routers, or proxies
+
+Examples: Palo Alto, Fortinet, Barracuda
+
+6. Hybrid Connectivity Options
+
+Point-to-Site VPN
+
+It connects a single client machine to Azure VNet
+
+Good for remote employees
+
+Site-to-Site VPN
+
+It connects on-premises networks entirely to Azure
+
+Secure and encrypted through VPN Gateway
+
+Azure ExpressRoute
+
+Private and dedicated link to Azure
+
+Provides high bandwidth and low latency
+
+Good for production workloads
+
+7. Integration with Azure Services
+
+Method
+
+Description
+
+Private Link
+
+Private access to a specific Azure service instance
+
+Service Endpoints
+
+Extend VNet to Azure services through public IPs, secure with VNet identity
+
+Dedicated Instances
+
+Run services completely within VNet for maximum isolation and control
+
+8. VNet Availability and Limits
+
+VNets and subnets cover all Availability Zones in a region.
+
+No requirement to split them per zone.
+
+Azure has soft limits on resources, which can be raised.
+
+Azure Networking Limits Documentation
+
+9. Pricing
+
+Azure Virtual Network is no-cost.
+
+Fees apply to:
+
+VPN Gateways
+
+Public IPs
+
+Data transfer
+
+Network appliances
+
+Azure Pricing Calculator
+
+10. Use Case Summary
+
+Scenario
+
+VNet-1: 10.0.0.0/16
+
+Subnet-Windows: 10.0.1.0/24
+
+Subnet-Linux: 10.0.2.0/24
+
+VNet-2: 10.1.0.0/16
+
+Subnet-VM2: 10.1.1.0/24
+
+Peering: Bidirectional between VNet-1 and VNet-2
+
+VMs:
+
+Windows VM in Subnet-Windows
+
+Linux VM in Subnet-Linux
+
+Additional VM in VNet-2
+
+Goal: All VMs can ping each other
+
+Configuration Checklist
+
+Create VNets and subnets
+
+Deploy VMs in each subnet
+
+Enable ICMP via NSGs
+
+Peer both VNets with traffic forwarding
+
