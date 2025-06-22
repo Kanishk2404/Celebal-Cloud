@@ -1,0 +1,220 @@
+1. Overview
+An NSG (Network Security Group) is utilized to manage inbound and outbound traffic to Azure resources within a Virtual Network (VNet).
+
+NSGs hold security rules that permit or block traffic given specific criteria.
+
+Every rule is characterized by attributes like name, priority, protocol, source/destination, port range, direction, and action.
+
+2. Rule Properties
+Every NSG rule contains the following properties:
+
+a. Name
+Distinct within the NSG
+
+b. Max 80 characters
+
+Must begin and end with word character or underscore
+
+Allowed characters: word characters (letters, numbers, underscore), dot (. ), hyphen (-), and underscore (_)
+
+b. Priority
+Value range: 100 through 4096
+
+Smaller number = greater priority
+
+Rules are processed in order of priority
+
+After traffic is matched to a rule, the following rules are bypassed
+
+Default Azure rules are given lower priority (greater number)
+c. Source or Destination
+May be specified as:
+
+Any
+
+IP address
+
+CIDR block (e.g., 10.0.0.0/24)
+
+Service tag (e.g., VirtualNetwork, Internet)
+
+Application Security Group (ASG)
+
+Multiple IPs and ranges within a single rule (Resource Manager model only)
+
+Inbound traffic: NSG applied after public-to-private IP translation
+
+Outbound traffic: NSG applied prior to private-to-public IP translation
+d. Protocol
+Supported protocols: TCP, UDP, ICMP, ESP, AH, Any
+
+ESP and AH are only accessed via templates (not Azure Portal)
+e. Direction
+Inbound
+
+Outbound
+
+f. Port Range
+Single port (e.g., 443) or range (e.g., 1000-2000)
+
+Multiple ranges permitted only in augmented rules (Resource Manager model)
+g. Action
+Allow
+
+Deny
+
+3. Rule Evaluation
+Rules are considered based on 5-tuple information:
+
+Source IP
+
+Source Port
+
+Destination IP
+
+Destination Port
+
+Protocol
+
+NSGs are stateful:
+If outbound rule is permit, response traffic is automatically permit inbound
+
+If inbound rule is permit, return traffic is permit outbound
+
+Cannot have two rules with same priority and direction
+
+Changes to NSG rules only apply to new connections; existing flows are not lost
+4. Default Rules
+Azure has the following default rules in each NSG. They cannot be removed but can be overridden by the addition of higher-priority rules.
+
+a. Inbound
+Rule Name\tPriority\tSource\tSource Ports\tDestination\tDest Ports\tProtocol\tAccess
+AllowVNetInBound\t65000\tVirtualNetwork\t0-65535\tVirtualNetwork\t0-65535\tAny\tAllow
+AllowAzureLoadBalancerInBound\t65001\tAzureLoadBalancer\t0-65535\t0.0.0.0/0\t0-65535\tAny\tAllow
+DenyAllInbound\t65500\t0.0.0.0/0\t0-65535\t0.0.0.0/0\t0-65535\tAny\tDeny
+
+b. Outbound
+Rule Name\tPriority\tSource\tSource Ports\tDestination\tDest Ports\tProtocol\tAccess
+AllowVNetOutBound\t65000\tVirtualNetwork\t0-65535\tVirtualNetwork\t0-65535\tAny\tAllow
+AllowInternetOutBound\t65001\t0.0.0.0/0\t0-65535\tInternet\t0-65535\tAny\tAllow
+DenyAllOutBound\t65500\t0.0.0.0/0\t0-65535\t0.0.0.0/0\t0-65535\tAny\tDeny
+
+5. Augmented Security Rules
+Enables multiple:
+
+IP addresses
+
+IP ranges
+
+Ports or port ranges
+
+Only supported in Resource Manager model
+
+Cannot enable multiple service tags or application security groups in a single rule
+
+Suitable to simplify large-scale security rule definitions
+
+6. Service Tags
+Represent a set of IP address ranges for Azure services
+
+Simplify NSG rules complexity
+
+Examples:
+
+VirtualNetwork
+
+AzureLoadBalancer
+
+Internet
+
+IPs behind such tags are maintained and updated by Azure
+
+7. Application Security Groups (ASG)
+Logical segregation of VMs by function or role
+
+Simplifies scalability and policy management
+
+Eliminates the management of individual IPs for NSG rules
+
+Often used for microservice-based architectural designs
+
+8. Flow Timeout
+Flow records are utilized to monitor active flows
+
+Timeout specifies how long a flow remains active without traffic
+
+Configurable via Azure portal or CLI
+
+Aids in maintaining stateful connection tracking
+
+9. Platform Considerations
+a. Host Node IPs for Platform Services
+Used IPs: 168.63.129.16 and 169.254.169.254
+
+Required for:
+DHCP
+DNS
+Health probes
+IMDS (Instance Metadata Service)
+Can override using:
+AzurePlatformDNS
+AzurePlatformIMDS
+AzurePlatformLKM
+b. Licensing - KMS Activation
+Licensing server utilizes TCP port 1688 for outbound activation
+Outbound access to KMS needed for Windows VMs
+c. Load Balanced VMs
+NSG rules are applied to traffic coming from/to actual source/destination IPs, not the load balancer
+d. Azure PaaS Services in VNets
+Services such as HDInsight, App Service Environment, and VM Scale Sets need specific ports
+
+Ensure necessary ports are not denied in NSG rules
+
+10. Outbound Email from VMs
+a. Recommended
+Utilize authenticated SMTP relay services (e.g., SendGrid, Exchange Online Protection)
+
+Connect over ports such as 587
+
+b. Port 25 Restrictions
+Outbound direct on port 25 is blocked in most subscriptions
+
+Subscription Type\tPort 25 Allowed\tNotes
+Enterprise Agreement\tYes\tNo guarantee on delivery
+Enterprise Dev/Test\tBlocked (request unblock)\tUnblock via diagnostics
+Pay-as-you-go\tBlocked\tNo exceptions
+MSDN, Azure Pass, Education, Free\tBlocked\tNo exceptions
+Cloud Service Provider	Blocked	No exceptions
+
+11. Best Practices
+Utilize low priority numbers (100–200) for custom rules to override default
+
+Do not use Any in rules, unless necessary
+
+Utilize NSGs at both NIC and subnet level as necessary
+
+Utilize service tags and ASGs for enhanced management
+
+Regularly scan NSG flow logs for audit and troubleshooting
+
+Integrate augmented rules with automation tools such as:
+
+ARM templates
+
+Terraform
+
+Bicep
+
+Ansible
+
+12. R&D and Real-World Insights
+Too-complex NSG configurations are difficult to debug – utilize Network Watcher
+
+NSGs enable compliance for security such as PCI-DSS, ISO 27001 when properly utilized
+
+NSGs are important in hybrid environments when VPN or ExpressRoute is used
+
+Infrastructure-as-Code maintains NSG consistency across environments
+
+NSGs must be architected around application architecture (e.g., tiered services)
+
