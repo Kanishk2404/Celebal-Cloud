@@ -1,0 +1,154 @@
+R&D Document
+Understanding and Implementation of a Three-Tier Architecture on Azure using Virtual Machines
+📌 Objective:
+To understand, design, and potentially implement a Three-Tier (N-tier) application architecture using Azure Virtual Machines, focusing on Web Tier, Application Tier, and Database Tier, including inbound/outbound networking and host-level firewall rules.
+
+🧱 Architecture Overview: Three-Tier (N-Tier)
+N-tier architecture divides an application into logical layers and physical tiers. Each tier is hosted on separate Virtual Machines (VMs), enhancing scalability, security, and manageability.
+
+Tiers Involved:
+Tier	Description	Azure Implementation
+Web Tier	Handles client interactions and HTTP requests.	Azure VM (IIS/Apache)
+App Tier	Contains business logic and application services.	Azure VM (Node.js/.NET)
+Database Tier	Stores data and manages database operations.	Azure VM (SQL Server/MySQL)
+
+🧭 Logical and Physical Architecture
+📌 Logical Layering:
+Presentation Layer (Web Tier): Interfaces with users.
+
+Business Logic Layer (App Tier): Processes application logic.
+
+Data Layer (DB Tier): Manages data access and storage.
+
+📌 Physical Separation:
+Each layer resides in its own Azure subnet for isolation:
+
+Subnet-WebTier
+
+Subnet-AppTier
+
+Subnet-DbTier
+
+Each tier uses Network Security Groups (NSGs) to control access.
+
+🌐 Networking Considerations
+🔄 Inbound/Outbound Network Rules:
+Tier	Inbound Allowed From	Outbound Allowed To
+Web Tier	Internet, WAF	App Tier only
+App Tier	Web Tier	DB Tier
+DB Tier	App Tier only	Block all except App Tier
+
+Use Load Balancers for each tier for high availability.
+
+DMZ Zone (optional): Use Network Virtual Appliances (NVAs) and Web Application Firewall (WAF) in front of the Web Tier.
+
+🔐 NSG Example (App Tier):
+json
+Copy
+Edit
+{
+  "source": "Subnet-WebTier",
+  "destination": "Subnet-AppTier",
+  "port": "TCP 80/443",
+  "action": "Allow"
+}
+🔥 Azure VM Host-Level Firewall
+Each VM must configure host-based firewalls (Windows Firewall/iptables):
+
+✅ Windows:
+Allow only required ports (e.g., 80/443 on Web Tier, 1433 on DB Tier).
+
+Block all others by default.
+
+✅ Linux:
+Use ufw or iptables.
+
+bash
+Copy
+Edit
+sudo ufw default deny incoming
+sudo ufw allow from <AppTierSubnetIP> to any port 1433
+sudo ufw enable
+☁️ Azure Services Used
+Service	Purpose
+Azure Virtual Machines	Host each tier
+Azure Load Balancer	Distribute traffic across VMs
+Azure VNet & Subnets	Network segmentation
+Azure NSGs	Access control
+Azure Bastion or Jumpbox	Secure remote admin access
+Azure Storage / SQL VM	Persistent data layer
+
+🛠 Best Practices
+Use VM Scale Sets for automatic scaling.
+
+Cache semi-static data using Azure Cache for Redis.
+
+Use Azure Monitor and Log Analytics for observability.
+
+Place App & DB Tier behind private IPs (no direct internet access).
+
+Use Asynchronous messaging (e.g., Azure Service Bus) between tiers when needed.
+
+Secure the jumpbox with an NSG allowing access only from admin IPs.
+
+✅ Use Cases for This Architecture
+Migrating on-premises web apps with minimal changes.
+
+Initial deployment when service architecture is unclear.
+
+Applications requiring tight control over infrastructure.
+
+Hybrid deployments (on-prem + cloud).
+
+Highly regulated environments.
+
+⚖️ Pros and Cons
+✅ Pros:
+Portability and familiarity.
+
+Easy to manage with a traditional skillset.
+
+Better isolation, fault tolerance.
+
+Azure VM supports Windows/Linux for diverse environments.
+
+❌ Cons:
+Monolithic risks (e.g., tight coupling).
+
+Requires manual maintenance of VMs.
+
+Slightly higher latency due to inter-tier communication.
+
+Harder to scale and release features independently if not well modularized.
+
+🖼️ Visual Representation
+plaintext
+Copy
+Edit
+Internet
+   |
+Azure WAF / Load Balancer
+   |
+[ Web Tier (Subnet A) ]
+   |
+[ App Tier (Subnet B) ]
+   |
+[ Database Tier (Subnet C) ]
+🔒 Security Enhancements
+Place each tier in separate subnets for access control.
+
+Use NSGs and Route Tables to enforce traffic flow.
+
+Implement SQL Always On / DB replication.
+
+Use Azure Private Link for storage or database access.
+
+🔧 Further Enhancements
+Introduce CI/CD pipelines for automation.
+
+Use ARM/Bicep/Terraform for infra-as-code deployment.
+
+Migrate some services to PaaS (e.g., Azure SQL, App Service) where feasible.
+
+Monitor cost vs performance and shift to containerized workloads (AKS) if scaling becomes difficult.
+
